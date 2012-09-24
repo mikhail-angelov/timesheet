@@ -1,0 +1,8 @@
+-add mysql database to store data
+-add login procedure
+-add cooky support
+-use ssc for nice view
+-backup data
+-add temp database support, inorder to enter preliminary data
+-team view (lead can see all engineers in team)
+-reports
