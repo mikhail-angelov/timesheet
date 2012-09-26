@@ -7,9 +7,13 @@ var express = require('express')
   , routes = require('./routes')
   , user = require('./routes/user')
   , http = require('http')
-  , path = require('path');
+  , path = require('path')
+  ;
 
 var app = express();
+var nstore_model;
+require('./db/nstore_model.js').nstore_model('db/wbd.db', function(m){nstore_model = m;});
+
 
 app.configure(function(){
   app.set('port', process.env.PORT || 3000);
@@ -33,7 +37,7 @@ function currentWeek(d) {
     return Math.ceil((((d - onejan) / 86400000) + onejan.getDay()+1)/7);
 } 
 
-var model = require('./routes/week_model.js');
+
 var week = currentWeek(new Date());
 console.log('current week - ' + week);
 
@@ -41,24 +45,19 @@ app.get('/', routes.index); //todo: need refactor
 //app.get('/users', user.list);
 
 app.post('/week/:wn', function (req, res) {
+  console.log(nstore_model);
   week = req.params.wn;
-  console.log(req.params.wn);  
-//todo: get data from DB
-  var a = new model.week_status(week);
-  console.log(JSON.stringify(a));
-//then post it
-  res.send(JSON.stringify(a));
+  nstore_model.get_weekly_data(week,'todo', function(a) {
+    res.send(JSON.stringify(a));
+  });
 });
 
 app.post('/set/:value', function (req, res) {
+  console.log(nstore_model);
   console.log(req.params.value);  
-//todo: set data from DB, and return in back to client
-  var a = new model.week_status(week);
-  var v = req.params.value.split(',',7); //todo: not a nice form to pass data
-  a.users[0].days[0].hours = v[0];
-  console.log(JSON.stringify(a));
-//then post it
-  res.send(JSON.stringify(a));
+  nstore_model.set_weekly_data(week,'todo',req.params.value, function(a) {
+    res.send(JSON.stringify(a));
+  });
 });
 
 
