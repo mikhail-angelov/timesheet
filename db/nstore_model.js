@@ -1,8 +1,19 @@
 var nstore = require('nstore');
+nstore = nstore.extend(require('nstore/query')());
 var model = require('../routes/week_model.js');
 
 //implementation
-
+function find_items(db, filter, cb) {
+  var stream = db.find(filter);
+  console.log('s ' +stream);
+  var results = [];
+  stream.on("document", function (doc, key) {
+    result.push({'key':key, 'data':doc});
+  });
+  stream.on("end", function () {
+    cb(results);
+  });
+};
 
 //interface
 function nstore_model(path, cb) {
@@ -12,26 +23,49 @@ function nstore_model(path, cb) {
     if(db) {
 	  return cb({
 	    get_weekly_data: function(week, user, cb) {
-           var m = new model.week_status(week);
-           return cb(m);
+           var filter = {'week': week, 'user' : user};
+		   console.log('filter ' + JSON.stringify(filter));
+		   db.find(filter, function (err, results) {
+		     var keys =  Object.keys(results); //array of keys
+			 if(keys.length > 0) {
+			   console.log('doc ' + JSON.stringify(results[keys[0]]));
+			   return cb(results[keys[0]]);
+			 }
+           });
         },
         set_weekly_data: function(week, user, data, cb) {
-          var m = new model.week_status(week);
-          var v = data;//(',',7); //todo: not a nice form to pass data
-          for(var i = 0 ; i < 7; i++) m.users[0].days[i].hours = v[i];
-          m.week = week;
-		  m.users[0].user_id = user;
-		  db.save(null, m, function (err, key) {
-            if (err) { console.log('err'); throw err; }
-            // You now have the generated key
-			db.get(key, function (err, doc, key) {
-    if (err) { console.log('err'); throw err; }
-    // You now have the document
-	console.log('from db');
-	console.log(JSON.stringify(doc));
-    });
-          });
-		  return cb(m);
+           var filter = {'week': week, 'user' : user};
+           console.log('filter ' + JSON.stringify(filter));
+ 		   db.find(filter, function (err, results) {
+		     console.log('results ' + JSON.stringify(results));
+             var key = null;
+			 if( results != undefined) {
+               var keys =  Object.keys(results); //array of keys
+			   console.log('err ' + JSON.stringify(err));
+			   console.log('key ' + JSON.stringify(Object.keys(results)) + keys.length);
+               if(keys.length > 0) {
+			     key = keys[0];
+               }
+             }
+			 var m = new model.week_status(week, user);
+             for(var i = 0 ; i < 7; i++) m.days[i].hours = data[i];
+			 if(key) {
+			   //remove it
+			   db.remove(key, function (err) {
+                 if (err) { throw err; }
+                 db.save(key, m, function (err, key) {
+			       console.log('err');
+			       return cb(m);
+			     });
+               });
+			 }
+             else {
+               db.save(null, m, function (err, key) {
+	             console.log('err');
+			     return cb(m);
+			   });
+			 }
+           });
         }
       });
     }
