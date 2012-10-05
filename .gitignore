@@ -5,12 +5,16 @@
 *.pydevproject
 .project
 .metadata
+node_modules/
 bin/
 tmp/
 *.tmp
 *.bak
 *.swp
 *~.nib
+*.sqlite3
+*.db
+*.txt
 local.properties
 .classpath
 .settings/
