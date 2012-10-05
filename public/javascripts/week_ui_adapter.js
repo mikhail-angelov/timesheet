@@ -68,24 +68,24 @@ function week_view(table, model, navigate, save) {
   //temp, has to be updated 
   for( var i = 0; i < 7; i++) head_row.insertCell(-1).innerHTML=weekdays[i] + ' ' + (today - week_day + i - 1);
 
-  for(var i in model.users) {
-    var user = model.users[i];
+//  for(var i in model.users) {
+    var user = model.user_id;
     var data_row = table.insertRow(-1);
-    if(model.users.length == 1) {
+//    if(model.users.length == 1) {
       data_row.insertCell(-1).innerHTML = 'work hours';
-    } else {
-      data_row.insertCell(-1).innerHTML = 'user name';
-    }
+//    } else {
+//      data_row.insertCell(-1).innerHTML = 'user name';
+//    }
     //add row
-    for (var j in user.days) {
+    for (var j in model.days) {
       //add cell
       var new_cell = data_row.insertCell(-1);
-      new_cell.innerHTML = user.days[j].hours;
-      format_cell(new_cell, user.days[j].state);
+      new_cell.innerHTML = model.days[j].hours;
+      format_cell(new_cell, model.days[j].state);
     }
     //edit field
     data_row.insertCell(-1).innerHTML =
           '<input id="hours_user1" type="text"></input><button onclick=save_data("hours_user1")>v</button>';
-  }
+//  }
 }
 
