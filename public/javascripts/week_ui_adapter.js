@@ -51,8 +51,8 @@ function format_cell(cell, type) {
 }
 
 function week_view(table, model, navigate, save) {
-  s = save;
-  n = navigate;
+  s = save; //function pointer to save
+  n = navigate; //func pointer to navigate
 
   for (var i in table.rows) table.deleteRow(-1); //delete all rows
 

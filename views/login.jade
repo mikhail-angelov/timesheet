@@ -1,0 +1,14 @@
+
+extends layout1
+
+block content
+  h2 Login to timesheet
+  form(method='post', action='/login')
+    div
+      label User:
+        input(name='username', value='', type='text')
+    div
+      laber Password:
+        input(name='password', value='', type='password')
+    div
+      input(type='submit', value='Login')

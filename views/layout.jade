@@ -1,37 +1,10 @@
 doctype 5
 html
   head
-    title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
-    script(src="/javascripts/week_ui_adapter.js")
     script(src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js")
-    script  
-      var week_status = !{JSON.stringify(current_week)};
-      var week = !{week_number};
-      function on_load () {
-        week_view(document.getElementById('users'), week_status, 
-          function(direction){
-            week = direction > 0 ? ++week : --week;
-            console.log(week);
-            var a = new $.post("/week/"+week, function(data){
-             //todo: handle errors
-             week_status = JSON.parse(data);
-             //recursion :)
-             on_load();
-            });
-          },
-          function (text){
-            console.log(text);
-            var o = text.split(' ',7);
-            var b = o.join(','); //todo: maybe there nicer way to pass array data
-            console.log(b);
-            var a = new $.post("/set/"+b, function(data){
-             //todo: handle errors
-             week_status = JSON.parse(data);
-             //recursion
-             on_load();
-            });
-        });
-      }
-  body(onload='on_load()')
+    script(src="/javascripts/week_ui_adapter.js")
+    script(src="/javascripts/week_controller.js")
+     
+  body(onload='on_load(#{current_week}, #{model})')
     block content
