@@ -3,6 +3,7 @@
  
 function on_load (week_number, model) {
     console.log('on_load  ' + week_number);
+
     week_status = model;
     week = week_number;
     week_view(document.getElementById('users'), week_status, 

@@ -3,6 +3,136 @@ body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
-a {
-  color: #00B7FF;
+/*colors*/
+.vacation {
+  color: #000000;
+  background: #FFFF00;
+}
+.from_home {
+  color: #000000;
+  background: #4876FF;
+}
+.sick {
+  color: #000000;
+  background: #EEDD82;
+}
+.overtime {
+  color: #000000;
+  background: #FF0000;
+}
+.holyday {
+  color: #000000;
+  background: #8B4513;
+}
+
+div#footter {
+position: fixed; bottom: 0px; left: 25%;
+}
+
+#submit {
+    width: 100%;
+    margin-top: 20px;
+    padding: 15px 0;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-align: center;
+    text-decoration: none;
+    background: -moz-linear-gradient(
+        top,
+        #b9c5dd 0%,
+        #a4b0cb);
+    background: -webkit-gradient(
+        linear, left top, left bottom,
+        from(#b9c5dd),
+        to(#a4b0cb));
+
+    background: -moz-linear-gradient(
+        top,
+        #b9c5dd 0%,
+        #a4b0cb);
+    background: -o-gradient(
+        linear, left top, left bottom,
+        from(#b9c5dd),
+        to(#a4b0cb));
+
+    background: -ms-gradient(
+        linear, left top, left bottom,
+        from(#b9c5dd),
+        to(#a4b0cb));
+
+    background: gradient(
+        linear, left top, left bottom,
+        from(#b9c5dd),
+        to(#a4b0cb));
+
+   border-radius: 5px;
+    border: 1px solid #737b8d;
+    box-shadow:
+        0px 5px 5px rgba(0,0,0,0.1),
+        inset 0px 1px 0px rgba(255,255,255,0.5);
+
+    text-shadow:
+        0px 1px 3px rgba(0,0,0,0.3),
+        0px 0px 0px rgba(255,255,255,0);
+    display: table;
+    position: static;
+    clear: both;
+}
+
+.inputs #submit:hover {
+    background: -moz-linear-gradient(
+        top,
+        #a4b0cb 0%,
+        #b9c5dd);
+    background: -webkit-gradient(
+        linear, left top, left bottom,
+        from(#a4b0cb),
+        to(#b9c5dd));
+
+    background: -ms-linear-gradient(
+        top,
+        #a4b0cb 0%,
+        #b9c5dd);
+    background: -o-gradient(
+        linear, left top, left bottom,
+        from(#a4b0cb),
+        to(#b9c5dd));
+        
+    background: gradient(
+        linear, left top, left bottom,
+        from(#a4b0cb),
+        to(#b9c5dd));
+
+        
+}
+.table-containter{
+    border-collapse: collapse;
+    border: 1px solid #dddddd;
+    width: 80%;
+    
+}
+
+.table-containter td {
+  padding: 0px;
+  line-height: 20px;
+  text-align: center;
+  vertical-align: text-middle;
+  border-top: 1px solid #dddddd;
+  border-left: 1px solid #dddddd;
+  width: 80px;
+}
+
+.text-inline[type='text'] {
+   padding: 4px;
+   margin-bottom: 0;
+      height: 12px;
+    font-size: 10px;
+    vertical-align: middle;
+}
+
+.span44 {
+  width: 140px;
+  white-space: nowrap;
 }

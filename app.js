@@ -15,6 +15,7 @@ var app = express();
 var nsql_model;
 require('./dbsql/nsql_model.js').nsql_model('week.sqlite3', function(m){
   console.log('db init'); nsql_model = m;});
+var gconfig = {};
 
 app.configure(function(){
   app.set('port', process.env.PORT || 3000);
@@ -113,25 +114,32 @@ app.get('/login', function(req, res){
 
 app.post('/login', function(req, res){
   console.log('login post');
-  auth.auth(req.body.username, req.body.password, function(err, user){
-    if (user) {
-      // Regenerate session when signing in
-      // to prevent fixation 
-      req.session.regenerate(function(){
-        // Store the user's primary key 
-        // in the session store to be retrieved,
-        // or in this case the entire user object
-        req.session.user = user;
-        console.log(req.session.user);
-        res.redirect('back');
-      });
-    } else {
-      req.session.error = 'Authentication failed, please check your '
-        + ' username and password.'
-        + ' (use "tj" and "foobar")';
-      res.redirect('login');
-    }
-  });
+  if(req.body.command && req.body.command === 'login') {
+    auth.auth(req.body.username, req.body.password, function(err, user){
+      if (user) {
+        // Regenerate session when signing in
+        // to prevent fixation 
+        req.session.regenerate(function(){
+          // Store the user's primary key 
+          // in the session store to be retrieved,
+          // or in this case the entire user object
+          req.session.user = user;
+          console.log(req.session.user);
+          res.redirect('back');
+        });
+      } else {
+        req.session.error = 'Authentication failed, please check your '
+          + ' username and password.'
+          + ' (use "tj" and "foobar")';
+        res.redirect('login');
+      }
+    });
+  } else if (req.body.command && req.body.command === 'reset password') {
+    console.log('post a mail');
+    auth.send_mail(req.body.username, function(msg){
+       res.send(msg);
+    });
+  }
 });
 
 http.createServer(app).listen(app.get('port'), function(){

@@ -28,26 +28,25 @@ function navigate_weeks(direction){
   n(direction);
 }
 
-function format_cell(cell, type) {
-  var color = '#ffffff';
+function getType(type) {
+  var color = 'work';
   switch(type) {
-  case 1:
-    color = '#00B0F0'; //from home
+  case '1':
+    color = 'vacation';
     break;
-  case 2:
-    color = '#7030A0'; //Holiday in Lithuania
+  case '2':
+    color = 'sick';
     break;
-  case 3:
-    color = '#F79646'; //Sick
+  case '3':
+    color = 'overtime';
     break;
-  case 4:
-    color = 'red'; //Holiday in USA
+  case '4':
+    color = 'from_home';
     break;
-  case 5:
-    color = 'yellow'; //vacation
-    break;
+
   }
-  cell.style.backgroundColor = color;
+  console.log(color + type);
+  return color;
 }
 
 function week_view(table, model, navigate, save) {
@@ -64,7 +63,7 @@ function week_view(table, model, navigate, save) {
   var head_row = header.insertRow(0);
   const weekdays = new Array('Sat', 'Sun', 'Mon', 'Tue', 'Wen', 'Thu', 'Fri');
   head_row.insertCell(0).innerHTML = 
-    '<button id="prev" onclick="navigate_weeks(-1)">\<</button> Week ' + model.week + ' <button id="next" onclick="navigate_weeks(1)">\></button>';
+    '<div class ="span44"><button id="prev" onclick="navigate_weeks(-1)">\<</button> Week ' + model.week + ' <button id="next" onclick="navigate_weeks(1)">\></button></div>';
   //temp, has to be updated 
   for( var i = 0; i < 7; i++) head_row.insertCell(-1).innerHTML=weekdays[i] + ' ' + (today - week_day + i - 1);
 
@@ -80,12 +79,33 @@ function week_view(table, model, navigate, save) {
     for (var j in model.days) {
       //add cell
       var new_cell = data_row.insertCell(-1);
-      new_cell.innerHTML = model.days[j].hours;
-      format_cell(new_cell, model.days[j].state);
+      var id = "id"+j;
+      var type = "input-block-level " + getType(j);
+      console.log(type);
+      new_cell.innerHTML = '<a class="'+type+'" href="#"  id="'+id+'" rel="popover">'+model.days[j].hours+'</a>';
+      console.log(new_cell.innerHTML);
+
     }
     //edit field
-    data_row.insertCell(-1).innerHTML =
-          '<input id="hours_user1" type="text"></input><button onclick=save_data("hours_user1")>v</button>';
+    data_row.insertCell(-1).innerHTML ='<input id="hours_user1" class="text-inline" type="text" ></input><button onclick=save_data("hours_user1")>v</button>';
 //  }
+//console.log(window.jQuery("#id2"));
+console.log($("#users"));
+
+console.log(JSON.stringify($("#id2")));
+$(function(){
+  $("#id2").popover({trigger: 'focus', placement: 'bottom', title: '', content: '<div ><ul class="nav nav-tabs nav-stacked"> \
+<li><a class="work" onclick="alert(\'hi\');" href="#">work</a></li> \
+<li><a class="vacation" onclick="alert(\'hi\');" href="#">vacation</a></li> \
+<li><a class="sick" href="#">sick</a></li> \
+</ul></div>'});
+});
+
+$(function(){
+  $("#id1").popover({trigger: 'focus', title: '', content: "It's so simple to create a tooltop for my website!"});
+});
 }
 
+ $(document).ready(function(){
+
+});
