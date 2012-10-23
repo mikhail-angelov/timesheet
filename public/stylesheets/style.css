@@ -136,3 +136,32 @@ position: fixed; bottom: 0px; left: 25%;
   width: 140px;
   white-space: nowrap;
 }
+
+.mt td {
+ padding: 0px;
+ line-height: 50px;
+ text-align: center;
+ vertical-align: middle;
+ border-top: 1px solid #dddddd;
+}
+.ms{
+   padding: 0px;
+   display: block;
+   width: 100%;
+   min-height: 20px;
+}
+.color0{
+   background-color: white;
+}
+.color1{
+   background-color: pink;
+}
+.color2{
+   background-color: yellow;
+}
+.color3{
+   background-color: blue;
+}
+.color4{
+   background-color: red;
+}

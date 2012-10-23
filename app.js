@@ -92,7 +92,7 @@ app.get('/', function(req, res){
 app.get('/timesheet', restrict, function(req, res){
   console.log("get " + req.session.user);
   nsql_model.get_weekly_data(week, 0, function(a) {
-    res.render('index',{model : JSON.stringify(a), current_week : week});
+    res.render('index',{model : a, current_week : week});
   });
 });
 

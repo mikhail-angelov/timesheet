@@ -49,6 +49,24 @@ function getType(type) {
   return color;
 }
 
+const co = '<ul class ="nav nav-list"> \
+           <li><a href="#" class="color0" onclick="hand(%1,%2,0); return false;">work (8 hours)</a></li> \
+           <li><a href="#" class="color1" onclick="hand(%1,%2,1); return false;">sick</a></li> \
+           <li><a href="#" class="color2" onclick="hand(%1,%2,2); return false;">vacation</a></li> \
+           <li><a href="#" class="color3" onclick="hand(%1,%2,3); return false;">holyday</a></li> \
+           <li><a href="#" class="color4" onclick="hand(%1,%2,4); return false;">overtime</a></li> \
+         </ul>';
+
+
+function hand(id, index, type) { 
+   console.log(id);
+   model.days[index].state = type;
+   model.days[index].hours = 0;
+   if(type === 0) model.days[index].hours = 8;
+   id.setAttribute("class","ms color"+type);
+   id.innerHTML = model.days[index].hours;
+ }
+
 function week_view(table, model, navigate, save) {
   s = save; //function pointer to save
   n = navigate; //func pointer to navigate
@@ -62,13 +80,13 @@ function week_view(table, model, navigate, save) {
   var week_day = now.getDay();
   var head_row = header.insertRow(0);
   const weekdays = new Array('Sat', 'Sun', 'Mon', 'Tue', 'Wen', 'Thu', 'Fri');
-  head_row.insertCell(0).innerHTML = 
+  head_row.insertCell(-1).innerHTML = 
     '<div class ="span44"><button id="prev" onclick="navigate_weeks(-1)">\<</button> Week ' + model.week + ' <button id="next" onclick="navigate_weeks(1)">\></button></div>';
   //temp, has to be updated 
   for( var i = 0; i < 7; i++) head_row.insertCell(-1).innerHTML=weekdays[i] + ' ' + (today - week_day + i - 1);
 
 //  for(var i in model.users) {
-    var user = model.user_id;
+    var user = model.user;
     var data_row = table.insertRow(-1);
 //    if(model.users.length == 1) {
       data_row.insertCell(-1).innerHTML = 'work hours';
@@ -76,36 +94,25 @@ function week_view(table, model, navigate, save) {
 //      data_row.insertCell(-1).innerHTML = 'user name';
 //    }
     //add row
-    for (var j in model.days) {
-      //add cell
-      var new_cell = data_row.insertCell(-1);
-      var id = "id"+j;
-      var type = "input-block-level " + getType(j);
-      console.log(type);
-      new_cell.innerHTML = '<a class="'+type+'" href="#"  id="'+id+'" rel="popover">'+model.days[j].hours+'</a>';
-      console.log(new_cell.innerHTML);
+        //console.log(table);
+    var cell;
+    var tid;
+    var type;
+    var handler;
+    for (var i in model.days) {
+     cell = data_row.insertCell(-1);
+     tid = "tid"+i;
+     type = "color" + model.days[i].state;
+     cell.innerHTML = "<a href='#' class='ms "+type+"' id ='"+tid+"' data-toggle='dropdown'>"+model.days[i].hours+"</a>";
 
+     //add popdown menu
+     handler = co.replace(/%1/g,tid).replace(/%2/g,i);
+     //console.log(handler);
+     $("#"+tid).popover({content: handler, placement: 'bottom', trigger: 'trigger'}); //not good, byt fine
     }
+
     //edit field
     data_row.insertCell(-1).innerHTML ='<input id="hours_user1" class="text-inline" type="text" ></input><button onclick=save_data("hours_user1")>v</button>';
 //  }
 //console.log(window.jQuery("#id2"));
-console.log($("#users"));
-
-console.log(JSON.stringify($("#id2")));
-$(function(){
-  $("#id2").popover({trigger: 'focus', placement: 'bottom', title: '', content: '<div ><ul class="nav nav-tabs nav-stacked"> \
-<li><a class="work" onclick="alert(\'hi\');" href="#">work</a></li> \
-<li><a class="vacation" onclick="alert(\'hi\');" href="#">vacation</a></li> \
-<li><a class="sick" href="#">sick</a></li> \
-</ul></div>'});
-});
-
-$(function(){
-  $("#id1").popover({trigger: 'focus', title: '', content: "It's so simple to create a tooltop for my website!"});
-});
 }
-
- $(document).ready(function(){
-
-});
