@@ -32,17 +32,6 @@ $(document).ready(function on_load() {
         $.post('/set/', { data: JSON.stringify(model) }, function(res) {
                 alert(res);
             });
- /*       $.ajax({
-            url:'/set/'
-            , type:'POST'
-            , data:'jsonData=' + JSON.stringify(model)
-            , success: function(res) {
-                alert(res);
-            }
-            , error: function(err) {
-                alert(err);
-            }
-        });
-*/        $('#commit')[0].setAttribute('type', 'hidden'); //hide button
+        $('#commit')[0].setAttribute('type', 'hidden'); //hide button
     })
 });

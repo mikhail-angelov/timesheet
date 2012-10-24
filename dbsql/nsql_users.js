@@ -86,7 +86,7 @@ function set_pass(user_id, new_pass, new_salt, cb) {
         //parse data into array
         if(rows != undefined) {
           console.log(rows + rows.id);
-          _udb.prepare(user_update_password, snew_pass, new_salt, rows.id)
+          _udb.prepare(user_update_password, new_pass, new_salt, rows.id)
             .run(function(err) {
               console.log("upd " + err);
               return cb();
@@ -148,7 +148,7 @@ function nsql_users(path, cb) {
         return get_pass(user_id, _cb);
       },
       set_password: function(user_id, new_pass, new_salt, _cb){
-        return set_pass(user_id, new_pass, _cb);
+        return set_pass(user_id, new_pass, new_salt, _cb);
       },
       get_session: function(user_id, _cb){
         return get_sess(user_id, _cb);

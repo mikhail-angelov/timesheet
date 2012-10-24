@@ -62,7 +62,7 @@ console.log('current week - ' + week);
 app.post('/timesheet/:wn', function (req, res) {
   console.log(nsql_model);
   week = req.params.wn;
-  nsql_model.get_weekly_data(week, 0, function(a) {
+  nsql_model.get_weekly_data(week, req.session.user, function(a) {
     res.send(JSON.stringify(a));
   });
 });
@@ -86,7 +86,7 @@ app.post('/set/', function (req, res) {
 
 function restrict(req, res, next) {
   if (req.session.user) {
-    console.log("restrict" +req.session.user.name);
+    console.log("restrict" +req.session.user);
     next();
   } else {
     req.session.error = 'Access denied!';
@@ -100,7 +100,7 @@ app.get('/', function(req, res){
 
 app.get('/timesheet', restrict, function(req, res){
   console.log("get " + req.session.user);
-  nsql_model.get_weekly_data(week, 0, function(a) {
+  nsql_model.get_weekly_data(week, req.session.user, function(a) {
     res.render('index',{model : a, current_week : week});
   });
 });
@@ -122,7 +122,8 @@ app.get('/login', function(req, res){
 });
 
 app.post('/login', function(req, res){
-  console.log('login post');
+  console.log('login post ' );
+  console.log(req.body);
   if(req.body.command && req.body.command === 'login') {
     auth.auth(req.body.username, req.body.password, function(err, user){
       if (user) {
@@ -143,7 +144,7 @@ app.post('/login', function(req, res){
         res.redirect('login');
       }
     });
-  } else if (req.body.command && req.body.command === 'reset password') {
+  } else if (req.body.command && req.body.command === 'link') {
     console.log('post a mail');
     auth.send_mail(req.body.username, function(msg){
        res.send(msg);

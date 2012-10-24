@@ -81,17 +81,30 @@ function send_mail(name, cb) {
     }
   });
 
-  mailOptions.to = name + '@' + gconfig.mail_domain;
-  mailOptions.text += 'foobar';
-  console.log(mailOptions);
-  transport.sendMail(mailOptions, function(error, responseStatus){
-    //if(!error){
-               console.log(error); // response from the server
-                console.log(responseStatus  ); // response from the server
-    //}
-    transport.close(); // close the connection pool
-    if(cb) cb("error cod: " + error + "message: " +responseStatus);
-  });  
+  //generate new password
+  var pass = '0' + Math.floor(Math.random()*9999);
+  //store password, and send a mail
+  nsql_users.get_id(name, function(id){
+    if(id != undefined) {
+      hash(pass, function(err, salt, hash) {
+        nsql_users.set_password(id, hash, salt, function(){
+          mailOptions.to = name + '@' + gconfig.mail_domain;
+          mailOptions.text += pass;
+          console.log(mailOptions);
+          transport.sendMail(mailOptions, function(error, responseStatus){
+            //if(!error){
+                       console.log(error); // response from the server
+                        console.log(responseStatus  ); // response from the server
+            //}
+            transport.close(); // close the connection pool
+            if(cb) cb("error cod: " + error + "message: " +responseStatus);
+          });
+        });
+      });
+    } else {
+      if(cb) cb("No such user");
+    }
+  });
 }
 
 function validate_store_model(session, model) {
