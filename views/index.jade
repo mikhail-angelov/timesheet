@@ -2,7 +2,9 @@ extends layout
 
 block content
   h1 Timesheet   
-  table(class='table table-bordered table-striped mt', id='users')
+  table(class='table-containter mt', id='users')
   input(class='small', id='commit', type='hidden', value='Commit')
   p
+  hr
+  h5 User: #{user_name} 
   a(href='/logout') Logout

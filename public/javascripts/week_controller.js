@@ -30,7 +30,7 @@ $(document).ready(function on_load() {
     $('#commit').click(function(){
         console.log(JSON.stringify(model));
         $.post('/set/', { data: JSON.stringify(model) }, function(res) {
-                alert(res);
+                console.log(res);
             });
         $('#commit')[0].setAttribute('type', 'hidden'); //hide button
     })

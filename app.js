@@ -101,7 +101,7 @@ app.get('/', function(req, res){
 app.get('/timesheet', restrict, function(req, res){
   console.log("get " + req.session.user);
   nsql_model.get_weekly_data(week, req.session.user, function(a) {
-    res.render('index',{model : a, current_week : week});
+    res.render('index',{model : a, current_week : week, user_name: req.session.user_name});
   });
 });
 
@@ -134,6 +134,7 @@ app.post('/login', function(req, res){
           // in the session store to be retrieved,
           // or in this case the entire user object
           req.session.user = user;
+          req.session.user_name = req.body.username;
           console.log(req.session.user);
           res.redirect('back');
         });
