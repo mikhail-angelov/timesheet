@@ -29,24 +29,7 @@ function navigate_weeks(direction){
 }
 
 function getType(type) {
-  var color = 'work';
-  switch(type) {
-  case '1':
-    color = 'vacation';
-    break;
-  case '2':
-    color = 'sick';
-    break;
-  case '3':
-    color = 'overtime';
-    break;
-  case '4':
-    color = 'from_home';
-    break;
-
-  }
-  console.log(color + type);
-  return color;
+  return 'color'+type;
 }
 
 const co = '<ul class ="nav nav-list"> \
@@ -59,12 +42,14 @@ const co = '<ul class ="nav nav-list"> \
 
 
 function hand(id, index, type) { 
-   console.log(id);
+   //console.log(id);
    model.days[index].state = type;
    model.days[index].hours = 0;
    if(type === 0) model.days[index].hours = 8;
-   id.setAttribute("class","ms color"+type);
+   id.setAttribute("class","ms "+getType(type));
    id.innerHTML = model.days[index].hours;
+   console.log($('#commit')[0].getAttribute('type'));
+   $('#commit')[0].setAttribute('type', 'button'); //show commit button
  }
 
 function week_view(table, model, navigate, save) {
@@ -107,7 +92,7 @@ function week_view(table, model, navigate, save) {
 
      //add popdown menu
      handler = co.replace(/%1/g,tid).replace(/%2/g,i);
-     //console.log(handler);
+     console.log(cell.innerHTML);
      $("#"+tid).popover({content: handler, placement: 'bottom', trigger: 'trigger'}); //not good, byt fine
     }
 

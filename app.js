@@ -15,7 +15,7 @@ var app = express();
 var nsql_model;
 require('./dbsql/nsql_model.js').nsql_model('week.sqlite3', function(m){
   console.log('db init'); nsql_model = m;});
-var gconfig = {};
+
 
 app.configure(function(){
   app.set('port', process.env.PORT || 3000);
@@ -67,12 +67,21 @@ app.post('/timesheet/:wn', function (req, res) {
   });
 });
 
-app.post('/set/:value', function (req, res) {
-  console.log(nsql_model);
-  console.log(req.params.value);  
-  nsql_model.set_weekly_data(week, 0,req.params.value, function(a) {
-    res.send(JSON.stringify(a));
-  });
+app.post('/set/', function (req, res) {
+  if (req.session.user) {
+    console.log(req.body);
+    var store_model = JSON.parse(req.body.data);
+    console.log(store_model);
+    if(auth.validate_store_model(req.session, store_model)) {
+      nsql_model.set_weekly_data(store_model.week, store_model.user, store_model.days, function(a) {
+        res.send('ok');
+      });
+    } else {
+      res.send('ok'); //todo: send an error
+    }
+  } else { //lost session information
+    res.redirect('/login');
+  }
 });
 
 function restrict(req, res, next) {

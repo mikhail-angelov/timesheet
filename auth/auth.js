@@ -22,45 +22,49 @@ function setup(){
 };
 setup();
 
-//todo - redo it all
 // dummy database
+function dummy_database(){
+  var users = {
+    tj: { name: 'tj' },
+    tt: { name: 'tttt' }
+  };
 
-var users = {
-  tj: { name: 'tj' },
-  tt: { name: 'tttt' }
-};
+  nsql_users.get_id('tj', function(id){
+    console.log(id);
+    if(id === undefined) {
+      console.log('get h');
+      hash('1', function(err, salt, hash){ //get password
+        console.log('hash ' + hash);
+        nsql_users.new_user('tj','mikhail.angelov@auriga.com','all',hash,salt, function(){
+          console.log('tj is added');
+        })
+      });
+    }
+  });
+}
 
-// when you create a user, generate a salt
-// and hash the password ('foobar' is the pass here)
-
-hash('1', function(err, salt, hash){
-  console.log('hash');
-  if (err) throw err;
-  // store the salt & hash in the "db"
-  users.tj.salt = salt;
-  users.tj.hash = hash;
-
-  users.tt.salt = salt;
-  users.tt.hash = hash;
-});
+var nsql_users;
+require('../dbsql/nsql_users.js').nsql_users('users.sqlite3', function(m){
+  console.log('user db init'); nsql_users = m; dummy_database();});
 
 
 // Authenticate using our plain-object database of doom!
 function authenticate(name, pass, fn) {
   console.log('auth ' + name + pass);
   if (!module.parent) console.log('authenticating %s:%s', name, pass);
-  var user = users[name];
-  console.log(user);
-  // query the db for the given username
-  if (!user) return fn(new Error('cannot find user'));
-  // apply the same algorithm to the POSTed password, applying
-  // the hash against the pass / salt, if there is a match we
-  // found the user
-  hash(pass, user.salt, function(err, hash){
-    if (err) return fn(err);
-    if (hash == user.hash) return fn(null, user);
-    fn(new Error('invalid password'));
-  })
+
+  nsql_users.get_id(name, function(id){
+    nsql_users.get_password(id, function(password, salt){
+      hash(pass, salt, function(err, hash){
+        if (err) return fn(err);
+        if(hash == password) {
+          fn(null, id);
+        } else {
+          fn(new Error('invalid password'));
+        }
+      });
+    });
+  });
 }
 
 function send_mail(name, cb) {
@@ -79,7 +83,7 @@ function send_mail(name, cb) {
 
   mailOptions.to = name + '@' + gconfig.mail_domain;
   mailOptions.text += 'foobar';
-console.log(mailOptions);
+  console.log(mailOptions);
   transport.sendMail(mailOptions, function(error, responseStatus){
     //if(!error){
                console.log(error); // response from the server
@@ -90,5 +94,11 @@ console.log(mailOptions);
   });  
 }
 
+function validate_store_model(session, model) {
+  console.log(session)
+  return true;
+}
+
 module.exports.auth = authenticate;
 module.exports.send_mail = send_mail;
+module.exports.validate_store_model = validate_store_model;

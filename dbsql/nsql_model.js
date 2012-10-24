@@ -36,6 +36,7 @@ function get_row(week, user_id, cb) {
           for(var d=0; d<7; d++) {
             console.log(rows["hours"+d]);
             m.days[d].hours = rows["hours"+d];
+            m.days[d].state = rows["state"+d];
           }
         }
         cb(m);
@@ -44,26 +45,10 @@ function get_row(week, user_id, cb) {
 
 function set_row(week, user_id, data, cb) {
     console.log("set row "+ week +" , " + user_id);
-//validate data
-    var arr = data.split(',');
-    var hours = new Array(7);
-    console.log(arr);
-    if(arr.length === 5) {
-      hours[0] = 0;
-      hours[1] = 0;
-      for(var i = 0; i < 5; i++) {
-        hours[i+2] = arr[i];
-      }
-    } else if(arr.length === 7) {
-      for(var i = 0; i < 7; i++) {
-        hours[i] = arr[i];
-      }
-    } else {
-      //invalid
-      return cb();
-    }
+
     var m = new model.week_status(week, user_id);
-    for(var i = 0; i < 7; i++) {m.days[i].hours = hours[i];}
+    m.days = data
+
     console.log(m);
     //find a record and update it
     db.prepare(week_user_query, week, user_id)
@@ -71,13 +56,25 @@ function set_row(week, user_id, data, cb) {
         //parse data into array
         if(rows != undefined) {
           console.log(rows + rows.id);
-          db.prepare(week_user_update, hours[0], 2, hours[1], 5, hours[2], 4, hours[3], 3, hours[4], 2, hours[5], 1, hours[6], 0, rows.id)
+          db.prepare(week_user_update, m.days[0].hours, m.days[0].state,
+                                      m.days[1].hours, m.days[1].state, 
+                                      m.days[2].hours, m.days[2].state, 
+                                      m.days[3].hours, m.days[3].state, 
+                                      m.days[4].hours, m.days[4].state, 
+                                      m.days[5].hours, m.days[5].state,
+                                      m.days[6].hours, m.days[6].state, rows.id)
             .run(function(err) {
               console.log("upd " + err);
               return cb(m);
             });
         } else { //new line
-          db.prepare(week_user_insert, week, user_id, hours[0], 2, hours[1], 5, hours[2], 4, hours[3], 3, hours[4], 2, hours[5], 1, hours[6], 0)
+          db.prepare(week_user_insert, week, user_id, m.days[0].hours, m.days[0].state,
+                                                      m.days[1].hours, m.days[1].state, 
+                                                      m.days[2].hours, m.days[2].state, 
+                                                      m.days[3].hours, m.days[3].state, 
+                                                      m.days[4].hours, m.days[4].state, 
+                                                      m.days[5].hours, m.days[5].state,
+                                                      m.days[6].hours, m.days[6].state)
             .run(function(err) {
               console.log("insert " + err);
               return cb(m);
