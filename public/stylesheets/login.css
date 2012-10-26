@@ -37,12 +37,12 @@ a:hover{color:#4d7285;}
   border-bottom-right-radius: 5px;
   border-bottom-left-radius: 5px;
 }
-.bottom .title{color:#9c9c9c;font-size:14px;font-weight: bold;margin-bottom:15px;font-family: Arial, sans-serif;}
+.bottom .title{color:#9c9c9c;font-size:14px;font-weight: bold;margin-bottom:15px;font-family: Arial, sans-serif;}line-height:13px;display:block;color:#424242;margin-bottom:7px;font-weight:bold;
 
 
 form{font-family:'arial', sans-serif;}
 form .form_item{margin-bottom:25px;}
-form .form_item label{font-size:13px;line-height:13px;display:block;color:#424242;margin-bottom:7px;font-weight:bold;}
+form .form_item label{font-size:13px;line-height:13px;display:block;color:#424242;margin-bottom:4px;font-weight:bold;}
 
 /* text input formatting */
 form .form_item input[type="password"],
@@ -58,6 +58,12 @@ form .form_item input[type="text"]{
   line-height:27px;
   height: 27px;
   text-indent: 5px;
+}
+
+form .form_item1 label{margin:5px;font-size:13px;line-height:13px;color:#424242;margin-bottom:4px;font-weight:bold;margin-top:7px;}
+form .form_item1 input[type="checkbox"]{
+  font-size:14px;
+padding: 5px 10px;
 }
 
 /*big submit button*/
@@ -77,5 +83,6 @@ form .form_item input[type="text"]{
     -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 1); 
     -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 1); 
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 1);
+    margin-bottom:20px;
   } 
 

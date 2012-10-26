@@ -2,6 +2,7 @@
 html
   title Timesheet logn
   link(rel="stylesheet", href="/stylesheets/login.css")
+  script(type="text/javascript", src="/javascripts/jquery.1.7.2.js")
   body
     div(id='layout')
       form(method='post', action='/login')
@@ -9,15 +10,17 @@ html
           h1 Timesheet login form
         div(class='form_item')
           label User:
-          input(name='username', value='', type='text', autofocus)
+          input(name='username', id='user', value='', type='text', autofocus)
         div(class='form_item')
           label Password:
           input(name='password', value='', type='password')
         div(class='buttons')
           input(type='submit', name='command', value='login')
+        div(class='form_item1')
+          input(type='checkbox', name='remember', value='1')label Remember Me
         div(class='bottom')
-          div(class='title') If you do not know your password, enter name field and press this  
-            input(type='submit', name='command', value='link')
+          div(class='title') If you do not know your password, enter name field and press 
+            a(href='#', onclick='console.log($.post("/reset/",{user:$("#user").val()}));') this link
             , password will be sent on your mail.
 
 

@@ -2,12 +2,13 @@
 var sqlite3 = require('sqlite3').verbose();
 
 const db_name = "users.sqlite3";
-const create_users_table = "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT, email TEXT, team TEXT, password TEXT, salt TEXT, session TEXT)";
+const create_users_table = "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT, email TEXT, team TEXT, password TEXT, salt TEXT, \
+                            session TEXT, new_pass TEXT, flag INTEGER, date TEXT, ip TEXT)";
 const user_query = "SELECT * FROM users WHERE id = ?";
 const user_name_query = "SELECT * FROM users WHERE name = ?";
 const user_update_password = "UPDATE users SET password=?, salt=? WHERE id= ?";
 const user_update_session = "UPDATE users SET session=? WHERE id= ?";
-const user_insert = "INSERT INTO users (name, email, team, password, salt, session) VALUES(?, ?, ?, ?, ?, ?)";
+const user_insert = "INSERT INTO users (name, email, team, password, salt, flag) VALUES(?, ?, ?, ?, ?, ?)";
 
 var _udb; //private var
 
@@ -119,15 +120,10 @@ function set_sess(user_id, new_sess, cb) {
     });
 }
 
-function insert_new_user(name, email, team, password, salt, cb) {
+//sync function
+function insert_new_user(name, email, team, password, salt, flag) {
   console.log("insert_new_user " + name);
-
-  //find a record and update it
-  _udb.prepare(user_insert, name, email, team, password, salt, '')
-    .run(function(err) {
-      console.log("insert " + err);
-      return cb();
-    });
+  _udb.prepare(user_insert, name, email, team, password, salt, flag).run();
 }
 
 
@@ -156,8 +152,8 @@ function nsql_users(path, cb) {
       set_session: function(user_id, new_pass, new_salt, _cb){
         return set_ses(user_id, new_pass, _cb);
       },
-      new_user: function(name, email, team, password, salt, _cb){
-        return insert_new_user(name, email, team, password, salt, _cb);
+      new_user: function(name, email, team, password, salt, flag){
+        return insert_new_user(name, email, team, password, salt, flag);
       }
     });
   });

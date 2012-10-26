@@ -24,20 +24,22 @@ setup();
 
 // dummy database
 function dummy_database(){
-  var users = {
-    tj: { name: 'tj' },
-    tt: { name: 'tttt' }
-  };
-
-  nsql_users.get_id('tj', function(id){
+  nsql_users.get_id('mikhail.angelov', function(id){
     console.log(id);
     if(id === undefined) {
-      console.log('get h');
-      hash('1', function(err, salt, hash){ //get password
-        console.log('hash ' + hash);
-        nsql_users.new_user('tj','mikhail.angelov@auriga.com','all',hash,salt, function(){
-          console.log('tj is added');
-        })
+      //fill in our db
+      var master_pass = '0' + Math.floor(Math.random()*999);
+      hash(master_pass, function(err, salt, hash){ //get password
+        var users = fs.readFileSync(__dirname + '/staff.txt', 'utf8');
+         //it should be reg exp
+        users = users.split('\r\n');
+        for (var i = 0; i < users.length; i++) { //it could be all async, but I don't care
+          console.log('hash ' + users[i]);
+          var u = users[i].split(',');
+          if(u[0] != '') {
+            nsql_users.new_user(u[0],u[1],u[2],hash,salt,u[3]);
+          }
+        };
       });
     }
   });
@@ -82,22 +84,24 @@ function send_mail(name, cb) {
   });
 
   //generate new password
-  var pass = '0' + Math.floor(Math.random()*9999);
+  var pass = '0' + Math.floor(Math.random()*999);
   //store password, and send a mail
   nsql_users.get_id(name, function(id){
     if(id != undefined) {
       hash(pass, function(err, salt, hash) {
         nsql_users.set_password(id, hash, salt, function(){
-          mailOptions.to = name + '@' + gconfig.mail_domain;
-          mailOptions.text += pass;
-          console.log(mailOptions);
-          transport.sendMail(mailOptions, function(error, responseStatus){
-            //if(!error){
-                       console.log(error); // response from the server
-                        console.log(responseStatus  ); // response from the server
-            //}
-            transport.close(); // close the connection pool
-            if(cb) cb("error cod: " + error + "message: " +responseStatus);
+          nsql_users.get_name(id, function(name, email) {
+            mailOptions.to = email;
+            mailOptions.text += pass;
+            console.log(mailOptions);
+            transport.sendMail(mailOptions, function(error, responseStatus){
+              //if(!error){
+                         console.log(error); // response from the server
+                          console.log(responseStatus  ); // response from the server
+              //}
+              transport.close(); // close the connection pool
+              if(cb) cb("error cod: " + error + "message: " +responseStatus);
+            });
           });
         });
       });

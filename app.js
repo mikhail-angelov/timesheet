@@ -11,6 +11,8 @@ var express = require('express')
   , auth = require('./auth/auth')
   ;
 
+var MemoryStore = require('connect/lib/middleware/session/memory');
+    
 var app = express();
 var nsql_model;
 require('./dbsql/nsql_model.js').nsql_model('week.sqlite3', function(m){
@@ -27,6 +29,7 @@ app.configure(function(){
   //session
   app.use(express.cookieParser('secret level 0'));
   app.use(express.session());
+  //app.use(express.cookieSession());
   //session
   app.use(express.methodOverride());
   app.use(app.router);
@@ -84,8 +87,23 @@ app.post('/set/', function (req, res) {
   }
 });
 
+function check_session(req) {
+    console.log(req.headers);
+    console.log(req.cookies);
+  if(req.session.user === undefined) {
+    if(req.cookies.timesheet_user && req.cookies.timesheet_user!='') {
+      req.session.user = req.cookies.timesheet_user;
+      req.session.regenerate(function(){});
+      console.log(req.session.user);
+    }else{
+      return false;
+    }
+  }
+  return true;
+}
+
 function restrict(req, res, next) {
-  if (req.session.user) {
+  if (check_session(req)) {
     console.log("restrict" +req.session.user);
     next();
   } else {
@@ -109,12 +127,13 @@ app.get('/logout', function(req, res){
   // destroy the user's session to log them out
   // will be re-created next request
   req.session.destroy(function(){
+    res.cookie('timesheet_user', '', {maxAge: 1, httpOnly: true});
     res.redirect('/');
   });
 });
 
 app.get('/login', function(req, res){
-  if (req.session.user) {
+  if (check_session(req)) {
     res.redirect('timesheet');
   } else {
     res.render('login');
@@ -123,7 +142,10 @@ app.get('/login', function(req, res){
 
 app.post('/login', function(req, res){
   console.log('login post ' );
-  console.log(req.body);
+  console.log(req.cookies);
+  console.log(req.headers);
+  console.log('------------------------------------------');
+
   if(req.body.command && req.body.command === 'login') {
     auth.auth(req.body.username, req.body.password, function(err, user){
       if (user) {
@@ -135,23 +157,33 @@ app.post('/login', function(req, res){
           // or in this case the entire user object
           req.session.user = user;
           req.session.user_name = req.body.username;
-          console.log(req.session.user);
+          console.log(req.session);
+          //save cookies
+          if(req.body.remember != undefined){
+           console.log("remember - "+req.body.remember);
+           res.cookie('timesheet_user', user, {maxAge: 900000*4*24*8, httpOnly: true});
+          }
+          //res.cookie('tuser', user, {maxAge: 900000*4*24*8, httpOnly: true});
           res.redirect('back');
         });
       } else {
         req.session.error = 'Authentication failed, please check your '
-          + ' username and password.'
-          + ' (use "tj" and "foobar")';
+          + ' username and password.';
         res.redirect('login');
       }
     });
-  } else if (req.body.command && req.body.command === 'link') {
-    console.log('post a mail');
-    auth.send_mail(req.body.username, function(msg){
-       res.send(msg);
+  } 
+});
+
+app.post('/reset/', function(req, res){
+  if (req.body.user) {
+    console.log('post a mail to ' + req.body.user);
+    auth.send_mail(req.body.user, function(msg){
+       res.send('ok');
     });
   }
 });
+
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
