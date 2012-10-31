@@ -27,11 +27,9 @@ $(document).ready(function on_load() {
         });
       });
 
-    $('#commit').click(function(){
-        console.log(JSON.stringify(model));
-        $.post('/set/', { data: JSON.stringify(model) }, function(res) {
+    $('#report').click(function(){
+        $.post('/report/', { data: JSON.stringify(model), reciever: $('#reciever').val() }, function(res) {
                 console.log(res);
             });
-        $('#commit')[0].setAttribute('type', 'hidden'); //hide button
     })
 });

@@ -1,8 +1,9 @@
--add login procedure
--add cooky support
--use ssc for nice view
++add login procedure
++add cooky support
++use ssc for nice view
 -backup data
 -add temp database support, inorder to enter preliminary data
--team view (lead can see all engineers in team)
++team view (lead can see all engineers in team)
 -reports
 +add nstore database to store data, there is a rule, path: C:\Program Files (x86)\nodejs\db 
++add sqlite support

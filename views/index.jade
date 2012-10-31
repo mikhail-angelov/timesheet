@@ -1,10 +1,19 @@
 extends layout
 
 block content
-  h1 Timesheet   
-  table(class='table-containter mt', id='users')
-  input(class='small', id='commit', type='hidden', value='Commit')
-  p
-  hr
-  h5 User: #{user_name} 
-  a(href='/logout') Logout
+  div(id='all')
+    div(id='main')
+      h1 Timesheet   
+      table(class='table-containter mt', id='users')
+      p
+      input(class='btn btn-info', id='report', type='button', value='send report')
+      input(class='text-inline', id='reciever', type='text', value='')
+      hr
+      h5 User: #{user_name} 
+      a(href='/logout') Logout
+    div(id='footer', class='pagination-centered')
+      small This is timesheet tool, it supposed to help you to fill in weekly report. If you find any bugs in this tool, please send me a 
+        a(href="mailto:mikhail.angelov@auriga.com") mail. 
+        t Or you can fix it 
+        a(href="https://github.com/mikhail-angelov/timesheet") here 
+        t and send me pull request

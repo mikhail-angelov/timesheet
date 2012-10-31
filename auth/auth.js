@@ -45,8 +45,9 @@ function dummy_database(){
   });
 }
 
+var db = require('../dbsql/dbsql.js');
 var nsql_users;
-require('../dbsql/nsql_users.js').nsql_users('users.sqlite3', function(m){
+require('../dbsql/nsql_users.js').nsql_users(db.openDb(), function(m){
   console.log('user db init'); nsql_users = m; dummy_database();});
 
 
@@ -113,9 +114,18 @@ function send_mail(name, cb) {
 
 function validate_store_model(session, model) {
   console.log(session)
-  return true;
+  return true; //todo, implement
+}
+
+function send_report(user_id, model, reciever, cb) {
+  console.log('send_report');
+  console.log(user_id);
+  console.log(model);
+  console.log(reciever);
+  return cb(); //todo, implement
 }
 
 module.exports.auth = authenticate;
 module.exports.send_mail = send_mail;
 module.exports.validate_store_model = validate_store_model;
+module.exports.send_report = send_report;

@@ -12,15 +12,6 @@ const user_insert = "INSERT INTO users (name, email, team, password, salt, flag)
 
 var _udb; //private var
 
-function openDb(cb) {
-    console.log("createDb users");
-    if(_udb == undefined) {
-      _udb = new sqlite3.Database(db_name, function(){createTable(cb);});
-    } else {
-      cb();
-    }
-}
-
 function createTable(cb) {
     _udb.run(create_users_table, function(){
       _udb.run(create_users_table, cb)
@@ -128,8 +119,9 @@ function insert_new_user(name, email, team, password, salt, flag) {
 
 
 //interface
-function nsql_users(path, cb) {
-  openDb(function() {
+function nsql_users(_db, cb) {
+  _udb = _db;
+  createTable(function() {
     return cb({
       init_db: function(_cb){
         return initUsersDB(_cb);
