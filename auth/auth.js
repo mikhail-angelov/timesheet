@@ -10,8 +10,18 @@ var mailOptions = {
     from: "mikhail.angelov@auriga.com",
     to: "",
     subject: "new timesheet password",
-    text: "Your new timesheet password is: "
+    text: "Your new timesheet password is: ",
+    html: ""
 }
+var transportOptions = {
+  host: '',
+  port: 25,
+  security: false,
+  auth: {
+      user: '',
+      pass: ''
+  }
+};
 
 var gconfig = {};
 function setup(){
@@ -19,6 +29,10 @@ function setup(){
  //it should be reg exp
  str = str.split('\r\n').join("");
  gconfig = JSON.parse(str);
+ //set transportOptions
+ transportOptions.host = gconfig.smtp_server;
+ transportOptions.auth.user = gconfig.user;
+ transportOptions.auth.pass = gconfig.pass;
 };
 setup();
 
@@ -74,15 +88,7 @@ function send_mail(name, cb) {
   console.log('send_mail '+ name);
   //https://github.com/andris9/Nodemailer
 
-  var transport = nodemailer.createTransport("SMTP", {
-    host: gconfig.smtp_server,
-    port: 25,
-    security: false,
-    auth: {
-        user: gconfig.user,
-        pass: gconfig.pass
-    }
-  });
+  var transport = nodemailer.createTransport("SMTP", transportOptions);
 
   //generate new password
   var pass = '0' + Math.floor(Math.random()*999);
@@ -93,7 +99,7 @@ function send_mail(name, cb) {
         nsql_users.set_password(id, hash, salt, function(){
           nsql_users.get_name(id, function(name, email) {
             mailOptions.to = email;
-            mailOptions.text += pass;
+            mailOptions.html += pass;
             console.log(mailOptions);
             transport.sendMail(mailOptions, function(error, responseStatus){
               //if(!error){
@@ -117,12 +123,78 @@ function validate_store_model(session, model) {
   return true; //todo, implement
 }
 
+//-------------------
+const theader = '<table cellspacing="0" cols="8" border="0"><colgroup span="8" width="70"></colgroup><tbody>';
+const tfooter = '</tbody></table>';
+const trb = '<tr>';
+const tre = '</tr>';
+const tdb = '<td align="CENTER" bgcolor="%0" style="border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; border-left: 1px solid #ccc; border-right: 1px solid #ccc">';
+const tde = '</td>';
+const rheader = new Array('','Sat', 'Sun', 'Mon', 'Tue', 'Wen', 'Thu', 'Fri');
+//-------------------
+function get_state_color(state) {
+  var color = 'white';
+  switch(state){
+    case 1:
+     color = 'pink';
+     break;
+    case 2:
+     color = 'yellow';
+     break;
+    case 3:
+     color = 'blue';
+     break;
+    case 4:
+     color = 'red';
+     break;
+    case 5:
+     color = 'grey';
+     break;
+  }
+  return color;
+}
+
+//todo: it's better to make it acync
+function format_report(model) {
+ var html = '<h2>Timesheet report week: ' + model[0].week + '</h2>';
+ html += theader+trb;
+ var i=0;
+ for (i = 0; i < rheader.length; i++) {
+   html += tdb + rheader[i] + tde;
+ };
+ html += tre;
+ for (i = 0; i < model.length; i++) {
+   html +=trb+tdb+model[i].user_name+tde;
+   for (var j = 0; j < model[i].days.length; j++) {
+     html += tdb+model[i].days[j].hours+tde;
+     html = html.replace(/%0/g,get_state_color(model[i].days[j].state));
+   };
+   html +=tre;
+ };
+ html += tfooter;
+ console.log(html);
+ return html;
+}
+
 function send_report(user_id, model, reciever, cb) {
   console.log('send_report');
-  console.log(user_id);
-  console.log(model);
-  console.log(reciever);
-  return cb(); //todo, implement
+  var transport = nodemailer.createTransport("SMTP", transportOptions);
+  nsql_users.get_name(user_id, function(name, email) {
+    var model_object = JSON.parse(model);
+    mailOptions.to = email + ','+reciever;
+    mailOptions.subject = 'Weekly timesheet report: ' + model_object[0].week;
+    mailOptions.html = format_report(model_object);
+    mailOptions.text = 'html';
+    console.log(mailOptions);
+    transport.sendMail(mailOptions, function(error, responseStatus){
+      //if(!error){
+                 console.log(error); // response from the server
+                  console.log(responseStatus  ); // response from the server
+      //}
+      transport.close(); // close the connection pool
+      if(cb) cb();
+    });
+  });
 }
 
 module.exports.auth = authenticate;

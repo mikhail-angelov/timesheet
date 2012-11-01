@@ -23,27 +23,7 @@ body {
   background:#ccc;
 }
 
-/*colors*/
-.vacation {
-  color: #000000;
-  background: #FFFF00;
-}
-.from_home {
-  color: #000000;
-  background: #4876FF;
-}
-.sick {
-  color: #000000;
-  background: #EEDD82;
-}
-.overtime {
-  color: #000000;
-  background: #FF0000;
-}
-.holyday {
-  color: #000000;
-  background: #8B4513;
-}
+
 
 .left-text {
  text-align: left;
@@ -131,7 +111,7 @@ body {
 .table-containter{
     border-collapse: collapse;
     border: 1px solid #dddddd;
-    width: 80%;
+    width: 90%;
     
 }
 

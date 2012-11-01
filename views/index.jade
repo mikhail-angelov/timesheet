@@ -7,7 +7,8 @@ block content
       table(class='table-containter mt', id='users')
       p
       input(class='btn btn-info', id='report', type='button', value='send report')
-      input(class='text-inline', id='reciever', type='text', value='')
+      b  CC: 
+      input(class='text-inline', id='reciever', type='text', value='', placeholder='enter extra emails, with comma as delimeter')
       hr
       h5 User: #{user_name} 
       a(href='/logout') Logout
