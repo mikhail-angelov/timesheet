@@ -18,19 +18,44 @@ case 'ok': $('#err').html('Всё ок'); break;
 
 var s;  //not good, but i do not know how make it right
 var n;
+//-------------
+const reg_hours=/\d/g;
+const reg_style=[{state:4,regexp:/o/i},{state:2,regexp:/v/i},{state:1,regexp:/s/i},{state:3,regexp:/h/i},{state:0,regexp:/\d/i}];
+//-------------
 
 function input_value(row){
   var text = $('#input'+row).val()
   $('#input'+row)[0].setAttribute('value', '');
   console.log(text);
   if(text == '') {
-    for( var i = 2; i < 7; i++) hand(row, i, 0, 8); //happy path
+    for( var k = 2; k < 7; k++) hand(row, k, 0, 8); //happy path
   } else {
     var hours = text.split(' ');
     if(hours.length == 5) {
-      onsole.log(hours); //todo: handle it properly
-    } else if(hours.length == 7) {
-      console.log('handle 7');
+      console.log('5 items'); //todo: handle it properly
+      for (var i = 0; i < hours.length; i++) {
+        console.log(hours[i]);
+        for (var j = 0; j < reg_style.length; j++) {
+          if(hours[i] && hours[i].match(reg_style[j].regexp) && hours[i].match(reg_style[j].regexp)[0] != ''){
+            var h = hours[i].match(reg_hours) ? hours[i].match(reg_hours)[0] : 0;
+            hand(row, i+2, reg_style[j].state, h);
+            break;
+          };
+        };
+      };
+    } else if(hours.length > 6) {
+      console.log('7 items'); //todo: handle it properly
+      for (var i = 0; i < hours.length; i++) {
+        console.log(hours[i]);
+        for (var j = 0; j < reg_style.length; j++) {
+          if(hours[i] && hours[i].match(reg_style[j].regexp) && hours[i].match(reg_style[j].regexp)[0] != ''){
+            var h = hours[i].match(reg_hours) ? hours[i].match(reg_hours)[0] : 0;
+            hand(row, i, reg_style[j].state, h);
+            break;
+          };
+        };
+      };
+
     } else {
       console.log('incorrect input');
     }

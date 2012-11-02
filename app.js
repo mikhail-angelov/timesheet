@@ -159,7 +159,7 @@ app.post('/login', function(req, res){
   console.log('------------------------------------------');
 
   if(req.body.command && req.body.command === 'login') {
-    auth.auth(req.body.username, req.body.password, function(err, user){
+    auth.auth(req.body.username.toLowerCase(), req.body.password, function(err, user){
       if (user) {
         // Regenerate session when signing in
         // to prevent fixation 
@@ -190,7 +190,7 @@ app.post('/login', function(req, res){
 app.post('/reset/', function(req, res){
   if (req.body.user) {
     console.log('post a mail to ' + req.body.user);
-    auth.send_mail(req.body.user, function(msg){
+    auth.send_mail(req.body.user.toLowerCase(), function(msg){
        res.send('ok');
     });
   }

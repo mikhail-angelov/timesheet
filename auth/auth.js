@@ -9,8 +9,8 @@ var hash = require('./pass').hash;
 var mailOptions = {
     from: "mikhail.angelov@auriga.com",
     to: "",
-    subject: "new timesheet password",
-    text: "Your new timesheet password is: ",
+    subject: "",
+    text: "",
     html: ""
 }
 var transportOptions = {
@@ -99,7 +99,9 @@ function send_mail(name, cb) {
         nsql_users.set_password(id, hash, salt, function(){
           nsql_users.get_name(id, function(name, email) {
             mailOptions.to = email;
-            mailOptions.html += pass;
+            mailOptions.html = '';
+            mailOptions.subject = "new timesheet password";
+            mailOptions.text = "Your new timesheet password is: " + pass;
             console.log(mailOptions);
             transport.sendMail(mailOptions, function(error, responseStatus){
               //if(!error){
