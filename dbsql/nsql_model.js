@@ -22,8 +22,10 @@ function createTable(cb) {
 }
 
 function merge_users(output, row) {
+  console.log('merge_users - row');
+  console.log(row);
   for (var i = 0; i < output.length; i++) {
-    if(output[i].user == row.user_id) {
+    if(row && output[i].user == row.user_id) {
       output[i].id = row.id;
       for(var d=0; d<7; d++) {
         output[i].days[d].hours = row["hours"+d];

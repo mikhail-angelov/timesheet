@@ -55,7 +55,6 @@ function input_value(row){
           };
         };
       };
-
     } else {
       console.log('incorrect input');
     }
@@ -73,6 +72,16 @@ function getType(type) {
 
 function getCellElementID(row, col) {
   return "tid"+col+"_"+row;
+}
+
+function set_button_name(text, id) {
+  console.log('set_button_name');
+  console.log(text);
+  if(text === ''){
+    id.setAttribute('value','Set 8');
+  } else {
+    id.setAttribute('value','Set');
+  }
 }
 
 const co = '<ul class ="nav nav-list"> \
@@ -157,9 +166,12 @@ function week_view(table, model, navigate, save) {
     }
 
     //edit field
-    data_row.insertCell(-1).innerHTML ='<div class="left-text"><input id="input'+u+'" class="text-inline" type="text" placeholder="you can enter hours here"> </input> \
-                                       <button class="btn btn-small btn-success" onclick=input_value('+u+')>Set 8</button> \
+    data_row.insertCell(-1).innerHTML ='<div class="left-text"><input id="input'+u+'" class="text-inline" onkeyup="set_button_name(this.value, set'+u+')" type="text" placeholder="you can enter hours here"> </input> \
+                                       <input class="btn btn-mini btn-success" id="set'+u+'" onclick=input_value('+u+') type="button" value="Set 8"></input> \
                                        <input class="btn btn-small btn-info" id="commit'+u+'" onclick=commit('+u+') type="hidden" value="Save"></input></div>';
   }
+  //add tooltips for edit fields
+  $('.text-inline').tooltip({title:'format for hours info: (type)(hours) <br/>\
+                                    example: 0 0 v v 8 8 8<br/>avaliable code types: v-vocation, s-sick, o-overtime, h-holiday',html:true,placement:'bottom'});
 //console.log(window.jQuery("#id2"));
 }

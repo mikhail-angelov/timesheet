@@ -131,8 +131,17 @@ const tfooter = '</tbody></table>';
 const trb = '<tr>';
 const tre = '</tr>';
 const tdb = '<td align="CENTER" bgcolor="%0" style="border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; border-left: 1px solid #ccc; border-right: 1px solid #ccc">';
+const tdbu = '<td align="LEFT" style="border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; border-left: 1px solid #ccc; border-right: 1px solid #ccc">';
+const tdbh1 = '<td align="LEFT" width="167" bgcolor="grey" style="border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; border-left: 1px solid #ccc; border-right: 1px solid #ccc">';
+const tdbh2 = '<td align="CENTER" width="67" bgcolor="grey" style="border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; border-left: 1px solid #ccc; border-right: 1px solid #ccc">';
 const tde = '</td>';
-const rheader = new Array('','Sat', 'Sun', 'Mon', 'Tue', 'Wen', 'Thu', 'Fri');
+const rfooter = '<h3>Legend</h3><table><tbody> \
+  <tr><td bgcolor="yellow" width=67></td><td>Vacation</td></tr> \
+  <tr><td bgcolor="pink"></td><td>Sick</td></tr> \
+  <tr><td bgcolor="blue"></td><td>Holiday</td></tr> \
+  <tr><td bgcolor="red"></td><td>Overtime</td></tr> \
+  </tbody></table>';
+const rheader = new Array('Sat', 'Sun', 'Mon', 'Tue', 'Wen', 'Thu', 'Fri');
 //-------------------
 function get_state_color(state) {
   var color = 'white';
@@ -160,20 +169,27 @@ function get_state_color(state) {
 function format_report(model) {
  var html = '<h2>Timesheet report week: ' + model[0].week + '</h2>';
  html += theader+trb;
+ html += tdbh1 + ' ' + tde; //empty cell
  var i=0;
+ var hours_data = '';
  for (i = 0; i < rheader.length; i++) {
-   html += tdb + rheader[i] + tde;
+   html += tdbh2 + rheader[i] + tde;
  };
  html += tre;
  for (i = 0; i < model.length; i++) {
-   html +=trb+tdb+model[i].user_name+tde;
+   html +=trb+tdbu+model[i].user_name+tde;
    for (var j = 0; j < model[i].days.length; j++) {
-     html += tdb+model[i].days[j].hours+tde;
-     html = html.replace(/%0/g,get_state_color(model[i].days[j].state));
+     hours_data = (model[i].days[j].hours == 0) ? '' : model[i].days[j].hours;
+     hours_data = tdb+hours_data+tde;
+     console.log(hours_data);
+     hours_data = hours_data.replace(/%0/g,get_state_color(model[i].days[j].state));
+     html += hours_data;
+     hours_data = '';
    };
    html +=tre;
  };
  html += tfooter;
+ html += rfooter;
  console.log(html);
  return html;
 }
