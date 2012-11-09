@@ -3,7 +3,7 @@ var sqlite3 = require('sqlite3').verbose();
 
 const db_name = "users.sqlite3";
 const create_users_table = "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT, email TEXT, team TEXT, password TEXT, salt TEXT, \
-                            session TEXT, new_pass TEXT, flag INTEGER, date TEXT, ip TEXT)";
+                            session TEXT, new_pass TEXT, flag INTEGER, date TEXT, ip TEXT, filter TEXT)";
 const user_query = "SELECT * FROM users WHERE id = ?";
 const user_name_query = "SELECT * FROM users WHERE name = ?";
 const user_update_password = "UPDATE users SET password=?, salt=? WHERE id= ?";

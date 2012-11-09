@@ -19,8 +19,8 @@ case 'ok': $('#err').html('Всё ок'); break;
 var s;  //not good, but i do not know how make it right
 var n;
 //-------------
-const reg_hours=/\d/g;
-const reg_style=[{state:4,regexp:/o/i},{state:2,regexp:/v/i},{state:1,regexp:/s/i},{state:3,regexp:/h/i},{state:0,regexp:/\d/i}];
+const reg_hours=/\d\d|\d/;
+const reg_style=[{state:4,regexp:/o/i},{state:2,regexp:/v/i},{state:1,regexp:/s/i},{state:3,regexp:/h/i},{state:0,regexp:/\d\d|\d/i}];
 //-------------
 
 function input_value(row){
@@ -166,12 +166,12 @@ function week_view(table, model, navigate, save) {
     }
 
     //edit field
-    data_row.insertCell(-1).innerHTML ='<div class="left-text"><input id="input'+u+'" class="text-inline" onkeyup="set_button_name(this.value, set'+u+')" type="text" placeholder="you can enter hours here"> </input> \
+    data_row.insertCell(-1).innerHTML ='<div class="left-text"><input id="input'+u+'" class="text-inline manual_input" onkeyup="set_button_name(this.value, set'+u+')" type="text" placeholder="you can enter hours here"> </input> \
                                        <input class="btn btn-mini btn-success" id="set'+u+'" onclick=input_value('+u+') type="button" value="Set 8"></input> \
                                        <input class="btn btn-small btn-info" id="commit'+u+'" onclick=commit('+u+') type="hidden" value="Save"></input></div>';
   }
   //add tooltips for edit fields
-  $('.text-inline').tooltip({title:'format for hours info: (type)(hours) <br/>\
-                                    example: 0 0 v v 8 8 8<br/>avaliable code types: v-vocation, s-sick, o-overtime, h-holiday',html:true,placement:'bottom'});
+  $('.manual_input').tooltip({title:'<div class="left-text">format for hours info: (type)(hours) <br/>\
+                                    example: 0 0 v v 8 8 8<br/>avaliable code types: v-vocation, s-sick, o-overtime, h-holiday </div>',html:true,placement:'bottom'});
 //console.log(window.jQuery("#id2"));
 }

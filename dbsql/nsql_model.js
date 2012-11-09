@@ -7,8 +7,11 @@ const week_user_query = "SELECT * FROM week WHERE week = ? AND user_id = ?";
 const week_group_query = "SELECT * FROM week WHERE week = ? AND user_id IN \
                           (SELECT id FROM users WHERE team IN \
                            (SELECT team FROM users WHERE id = ?))";
+const week_group_query_filter = "SELECT * FROM week WHERE week = ? AND user_id IN \
+                                 (SELECT id FROM users WHERE team IN (%0))";
 const group_query = "SELECT * FROM users WHERE team IN \
                            (SELECT team FROM users WHERE id = ?)";
+const group_query_filter = "SELECT * FROM users WHERE team IN (%0) ORDER BY team";
 const user_query = "SELECT * FROM users WHERE id = ?";
 const week_user_update = "UPDATE week SET hours0=?, state0=?,  hours1=?, state1=?, hours2=?, state2=?, hours3=?, state3=?, \
  hours4=?, state4=?, hours5=?, state5=?, hours6=?, state6=? WHERE id= ?";
@@ -22,8 +25,8 @@ function createTable(cb) {
 }
 
 function merge_users(output, row) {
-  console.log('merge_users - row');
-  console.log(row);
+  //console.log('merge_users - row');
+  //console.log(row);
   for (var i = 0; i < output.length; i++) {
     if(row && output[i].user == row.user_id) {
       output[i].id = row.id;
@@ -41,6 +44,8 @@ function get_row(week, user_id, cb) {
     var output = new Array();
     db.prepare(user_query, user_id).get(function(err, rows) {
       var flag = rows['flag'];
+      var filter = rows['filter'];
+      console.log(filter);
       if(flag == 0){
         //we have to get only one row, for one user
         //redo:
@@ -53,11 +58,12 @@ function get_row(week, user_id, cb) {
             console.log(rows);
             merge_users(output, rows[0]);
           }
-          cb(output);
+          return cb(output);
         });
       } else {
         //compose list of rows
-        db.prepare(group_query, user_id)
+        var query = group_query_filter.replace(/%0/g, filter);
+        db.prepare(query)
         .all(function(err, rows) {
           if(rows != undefined) {
             for(var i in rows) { //not good, it's better to use foreach
@@ -66,12 +72,13 @@ function get_row(week, user_id, cb) {
               output.push(m);
             }
             //get data from db and merge it with blank result array
-            db.prepare(week_group_query, week, user_id)
+            var query = week_group_query_filter.replace(/%0/g, filter);
+            db.prepare(query, week)
             .all(function(err, wrows){
               for(var i in wrows) { //todo, too havy operation, has to be async
                 merge_users(output, wrows[i]);
               }
-              cb(output);
+              return cb(output);
             });
           } else {
             console.log('error get row ', err);
@@ -79,21 +86,7 @@ function get_row(week, user_id, cb) {
         });
       }
     });
-    
 
-    var a = db.prepare(week_group_query, week, user_id);
-    a.all(function(err, rows) {
-        if(rows != undefined) {
-          console.log(rows);
-          rows.forEach(function (row) {
-            console.log(row);
-            console.log('-----------------------');
-          });
-        }
-        else {
-          console.log('empty result');
-        }
-      });
 /*    
 */
 }
