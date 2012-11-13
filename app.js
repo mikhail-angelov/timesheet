@@ -12,7 +12,7 @@ var express = require('express')
   , db = require('./dbsql/dbsql')
   ;
 
-var MemoryStore = require('connect/lib/middleware/session/memory');
+//var MemoryStore = require('connect/lib/middleware/session/memory');
     
 var app = express();
 var nsql_model;
@@ -65,10 +65,19 @@ console.log('current week - ' + week);
 
 app.post('/timesheet/:wn', function (req, res) {
   console.log(nsql_model);
-  week = req.params.wn;
-  nsql_model.get_weekly_data(week, req.session.user, function(a) {
-    res.send(JSON.stringify(a));
+  req.session.week = req.params.wn;
+  check_session(req, function(loggedin) {
+    if (loggedin) {
+      console.log("/timesheet/:wn" +req.session.user);
+      nsql_model.get_weekly_data(req.session.week, req.session.user, function(a) {
+        res.send(JSON.stringify(a));
+      });
+    } else {
+      req.session.error = 'Access denied!';
+      res.redirect('/login');
+    }
   });
+
 });
 
 app.post('/set/', function (req, res) {
@@ -92,12 +101,18 @@ function check_session(req, cb) {
   if(req.session.user === undefined) {
     if(req.cookies.timesheet_id && req.cookies.timesheet_id!='') {
       console.log('req.cookies.timesheet_id ' + req.cookies.timesheet_id);
-      req.session.regenerate(function(){
-        req.session.user = req.cookies.timesheet_id;
-        req.session.user_name = req.cookies.timesheet_user;
-        return cb(true);
+      auth.auth_with_hash(req.cookies.timesheet_id, req.cookies.timesheet_token,function(login){
+        if(login){
+          req.session.regenerate(function(){
+            req.session.user = req.cookies.timesheet_id;
+            req.session.user_name = req.cookies.timesheet_user;
+            req.session.week = currentWeek(new Date());
+            return cb(true);
+          });
+        }else{
+          return cb(false);
+        }
       });
-      console.log(req.session);
     }else{
       return cb(false);
     }
@@ -124,10 +139,13 @@ app.get('/', function(req, res){
 
 app.get('/timesheet', restrict, function(req, res){
   console.log("get " + req.session.user);
-  nsql_model.get_weekly_data(week, req.session.user, function(a) {
+  check_session(req, function(loggedin){
+
+  });
+  nsql_model.get_weekly_data(req.session.week, req.session.user, function(a) {
     console.log('render ts');
     console.log(req.session);
-    res.render('index',{model : a, current_week : week, user_name: req.session.user_name});
+    res.render('index',{model : a, current_week : req.session.week, user_name: req.session.user_name});
   });
 });
 
@@ -159,22 +177,23 @@ app.post('/login', function(req, res){
   console.log('------------------------------------------');
 
   if(req.body.command && req.body.command === 'login') {
-    auth.auth(req.body.username.toLowerCase(), req.body.password, function(err, user){
-      if (user) {
+    auth.auth(req.body.username.toLowerCase(), req.body.password, function(err, user_id, hash){
+      if (user_id) {
         // Regenerate session when signing in
         // to prevent fixation 
         req.session.regenerate(function(){
           // Store the user's primary key 
           // in the session store to be retrieved,
           // or in this case the entire user object
-          req.session.user = user;
+          req.session.user = user_id;
           req.session.user_name = req.body.username;
+          req.session.week = currentWeek(new Date());
           console.log(req.session);
           //save cookies
           if(req.body.remember != undefined){
-           res.cookie('timesheet_id', user, {maxAge: 900000, httpOnly: true});
+           res.cookie('timesheet_id', user_id, {maxAge: 900000, httpOnly: true});
            res.cookie('timesheet_user', req.body.username, {maxAge: 900000, httpOnly: true});
-           res.cookie('timesheet_token', 'token', {maxAge: 900000, httpOnly: true}); //todo add hash here
+           res.cookie('timesheet_token', hash, {maxAge: 900000, httpOnly: true});
           }
           res.redirect('back');
         });
@@ -207,3 +226,4 @@ app.post('/report/', function(req, res){
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
 });
+

@@ -65,7 +65,7 @@ require('../dbsql/nsql_users.js').nsql_users(db.openDb(), function(m){
   console.log('user db init'); nsql_users = m; dummy_database();});
 
 
-// Authenticate using our plain-object database of doom!
+// Authenticate 
 function authenticate(name, pass, fn) {
   console.log('auth ' + name + pass);
   if (!module.parent) console.log('authenticating %s:%s', name, pass);
@@ -75,12 +75,24 @@ function authenticate(name, pass, fn) {
       hash(pass, salt, function(err, hash){
         if (err) return fn(err);
         if(hash == password) {
-          fn(null, id);
+          fn(null, id, hash);
         } else {
           fn(new Error('invalid password'));
         }
       });
     });
+  });
+}
+
+// Authenticate 
+function authenticate_with_hash(id, hash, fn) {
+  console.log('authenticate_with_hash ' + id);
+  nsql_users.get_password(id, function(password, salt){
+    if(hash == password) {
+      fn(true);
+    } else {
+      fn(false);
+    }
   });
 }
 
@@ -216,6 +228,7 @@ function send_report(user_id, model, reciever, cb) {
 }
 
 module.exports.auth = authenticate;
+module.exports.auth_with_hash = authenticate_with_hash;
 module.exports.send_mail = send_mail;
 module.exports.validate_store_model = validate_store_model;
 module.exports.send_report = send_report;

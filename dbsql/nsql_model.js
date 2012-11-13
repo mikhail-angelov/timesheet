@@ -25,7 +25,7 @@ function createTable(cb) {
 }
 
 function merge_users(output, row) {
-  //console.log('merge_users - row');
+  console.log('merge_users - row');
   //console.log(row);
   for (var i = 0; i < output.length; i++) {
     if(row && output[i].user == row.user_id) {
@@ -46,7 +46,7 @@ function get_row(week, user_id, cb) {
       var flag = rows['flag'];
       var filter = rows['filter'];
       console.log(filter);
-      if(flag == 0){
+      if(filter == null || filter == ''){
         //we have to get only one row, for one user
         //redo:
         var m = new model.week_status(week, user_id);
@@ -87,8 +87,6 @@ function get_row(week, user_id, cb) {
       }
     });
 
-/*    
-*/
 }
 
 function set_row(week, user_id, data, cb) {

@@ -3,7 +3,7 @@ function week_status(week, user) {
   this.id = 0;
   this.user_name = '';
   this.week = (week === undefined) ? 0 : week;
-  this.user = (user === undefined) ? 0 : user;;
+  this.user = (user === undefined) ? 0 : user;
   this.days = new Array(7);
   for(var i = 0; i<7; i++) this.days[i] = { 
       hours : 0,

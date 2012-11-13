@@ -24,8 +24,8 @@ const reg_style=[{state:4,regexp:/o/i},{state:2,regexp:/v/i},{state:1,regexp:/s/
 //-------------
 
 function input_value(row){
-  var text = $('#input'+row).val()
-  $('#input'+row)[0].setAttribute('value', '');
+  var text = $('#input'+row).val();
+  $('#input'+row).val('');
   console.log(text);
   if(text == '') {
     for( var k = 2; k < 7; k++) hand(row, k, 0, 8); //happy path
@@ -60,7 +60,7 @@ function input_value(row){
     }
   }
 
-  $('#input'+row).val = ''; //clear text
+
 }
 function navigate_weeks(direction){
   n(direction);
@@ -86,12 +86,13 @@ function set_button_name(text, id) {
 
 const co = '<ul class ="nav nav-list"> \
            <li><a href="#" class="color0" onclick="hand(%0,%1,0,8); return false;">work (8 hours)</a></li> \
+           <li><a href="#" class="color5" onclick="hand(%0,%1,5,8); return false;">work from home(8)</a></li> \
            <li><a href="#" class="color1" onclick="hand(%0,%1,1,0); return false;">sick</a></li> \
            <li><a href="#" class="color2" onclick="hand(%0,%1,2,0); return false;">vacation</a></li> \
            <li><a href="#" class="color3" onclick="hand(%0,%1,3,0); return false;">holyday</a></li> \
            <li><a href="#" class="color4" onclick="hand(%0,%1,4,8); return false;">overtime (8 hours)</a></li> \
            <li><a href="#" class="color0" onclick="hand(%0,%1,0,0); return false;">clear</a></li> \
-         </ul>';
+           </ul>';
 
 function commit(id) {
   console.log(JSON.stringify(model[id]));
