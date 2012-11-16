@@ -15,6 +15,7 @@ tmp/
 *.sqlite3
 *.db
 *.txt
+*.log
 local.properties
 .classpath
 .settings/
