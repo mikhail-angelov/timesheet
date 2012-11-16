@@ -7,7 +7,7 @@ var nodemailer = require("nodemailer");
 var hash = require('./pass').hash;
 
 var mailOptions = {
-    from: "mikhail.angelov@auriga.com",
+    from: "timesheet-report@auriga.com",
     to: "",
     subject: "",
     text: "",
@@ -16,11 +16,7 @@ var mailOptions = {
 var transportOptions = {
   host: '',
   port: 25,
-  security: false,
-  auth: {
-      user: '',
-      pass: ''
-  }
+  security: false
 };
 
 var gconfig = {};
@@ -31,8 +27,6 @@ function setup(){
  gconfig = JSON.parse(str);
  //set transportOptions
  transportOptions.host = gconfig.smtp_server;
- transportOptions.auth.user = gconfig.user;
- transportOptions.auth.pass = gconfig.pass;
 };
 setup();
 
@@ -171,7 +165,7 @@ function get_state_color(state) {
      color = 'red';
      break;
     case 5:
-     color = 'grey';
+     color = '#8ee5ee';
      break;
   }
   return color;
