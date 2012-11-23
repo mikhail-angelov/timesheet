@@ -146,6 +146,7 @@ const rfooter = '<h3>Legend</h3><table><tbody> \
   <tr><td bgcolor="pink"></td><td>Sick</td></tr> \
   <tr><td bgcolor="blue"></td><td>Holiday</td></tr> \
   <tr><td bgcolor="red"></td><td>Overtime</td></tr> \
+  <tr><td bgcolor="#8ee5ee"></td><td>Work from home</td></tr> \
   </tbody></table>';
 const rheader = new Array('Sat', 'Sun', 'Mon', 'Tue', 'Wen', 'Thu', 'Fri');
 //-------------------

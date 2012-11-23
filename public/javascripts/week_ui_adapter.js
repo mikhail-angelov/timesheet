@@ -122,14 +122,20 @@ function week_view(table, model, navigate, save) {
   s = save; //function pointer to save
   n = navigate; //func pointer to navigate
 
-  for (var i in table.rows) table.deleteRow(-1); //delete all rows
+  //todo: this is argly hack to make it work in FF an Chrome
+  //for (var i in table.rows) table.deleteRow(); //delete all rows
+  var tableBody = table.getElementsByTagName('tbody');
+  var tableRows = table.getElementsByTagName('tr');
+  var rowCount = tableRows.length;
+  for (var x=rowCount-1; x>=0; x--) {
+     tableBody[0].removeChild(tableRows[x]);
+  }
+  //end of hack
 
-//add header
-  var header=table.createTHead();
+  //add header
   var now = new Date();
   now.setDate(model[0].week*7-9); //todo, will work for 2012 only
-  //var onejan = new Date(now.getFullYear(),0,1);
-  var head_row = header.insertRow(0);
+  var head_row = table.insertRow(-1);
   const weekdays = new Array('Sat', 'Sun', 'Mon', 'Tue', 'Wen', 'Thu', 'Fri');
   head_row.insertCell(-1).innerHTML = 
     '<div class ="span44"><button class="btn btn-mini btn-info" id="prev" onclick="navigate_weeks(-1)">\<</button> Week ' + model[0].week + ' \

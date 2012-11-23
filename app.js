@@ -165,7 +165,7 @@ app.get('/login', function(req, res){
     if (loggedin) {
       res.redirect('timesheet');
     } else {
-      res.render('login');
+      res.render('login',{error: 0});
     }
   });
 });
@@ -175,8 +175,7 @@ app.post('/login', function(req, res){
   console.log(req.cookies);
   console.log(req.headers);
   console.log('------------------------------------------');
-
-  if(req.body.command && req.body.command === 'login') {
+  if(req.body.username!=undefined && req.body.username!='' && req.body.password!=undefined && req.body.password!='') {
     auth.auth(req.body.username.toLowerCase(), req.body.password, function(err, user_id, hash){
       if (user_id) {
         // Regenerate session when signing in
@@ -195,23 +194,27 @@ app.post('/login', function(req, res){
            res.cookie('timesheet_user', req.body.username, {maxAge: 900000, httpOnly: true});
            res.cookie('timesheet_token', hash, {maxAge: 900000, httpOnly: true});
           }
-          res.redirect('back');
+          res.redirect('/login');
         });
       } else {
-        req.session.error = 'Authentication failed, please check your '
-          + ' username and password.';
-        res.redirect('login');
+        res.render('login',{error: 1});
       }
     });
-  } 
+  } else {
+    res.render('login',{error: 1});
+  }
 });
 
-app.post('/reset/', function(req, res){
-  if (req.body.user) {
+app.post('/reset', function(req, res){
+  console.log('post a mail to ');
+  console.log(req.body);
+  if (req.body.username) {
     console.log('post a mail to ' + req.body.user);
-    auth.send_mail(req.body.user.toLowerCase(), function(msg){
-       res.send('ok');
+    auth.send_mail(req.body.username.toLowerCase(), function(msg){
+       res.render('login',{error: 2});
     });
+  } else {
+    res.render('login',{error: 3});
   }
 });
 
