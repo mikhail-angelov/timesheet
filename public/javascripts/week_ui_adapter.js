@@ -20,7 +20,7 @@ var s;  //not good, but i do not know how make it right
 var n;
 //-------------
 const reg_hours=/\d\d|\d/;
-const reg_style=[{state:4,regexp:/o/i},{state:2,regexp:/v/i},{state:1,regexp:/s/i},{state:3,regexp:/h/i},{state:0,regexp:/\d\d|\d/i}];
+const reg_style=[{state:4,regexp:/o/i},{state:2,regexp:/v/i},{state:1,regexp:/s/i},{state:3,regexp:/h/i},{state:5,regexp:/m/i},{state:0,regexp:/\d\d|\d/i}];
 //-------------
 
 function input_value(row){
@@ -179,6 +179,6 @@ function week_view(table, model, navigate, save) {
   }
   //add tooltips for edit fields
   $('.manual_input').tooltip({title:'<div class="left-text">format for hours info: (type)(hours) <br/>\
-                                    example: 0 0 v v 8 8 8<br/>avaliable code types: v-vocation, s-sick, o-overtime, h-holiday </div>',html:true,placement:'bottom'});
+                                    example: 0 0 v v 8 8 8<br/>avaliable code types: v-vocation, s-sick, o-overtime, h-holiday, m-WFH </div>',html:true,placement:'bottom'});
 //console.log(window.jQuery("#id2"));
 }

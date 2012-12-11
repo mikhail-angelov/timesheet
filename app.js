@@ -106,6 +106,7 @@ function check_session(req, cb) {
           req.session.regenerate(function(){
             req.session.user = req.cookies.timesheet_id;
             req.session.user_name = req.cookies.timesheet_user;
+            req.session.receiver = req.cookies.timesheet_receiver;
             req.session.week = currentWeek(new Date());
             return cb(true);
           });
@@ -145,7 +146,7 @@ app.get('/timesheet', restrict, function(req, res){
   nsql_model.get_weekly_data(req.session.week, req.session.user, function(a) {
     console.log('render ts');
     console.log(req.session);
-    res.render('index',{model : a, current_week : req.session.week, user_name: req.session.user_name});
+    res.render('index',{model : a, current_week : req.session.week, user_name: req.session.user_name, receiver: req.session.receiver});
   });
 });
 
@@ -176,7 +177,7 @@ app.post('/login', function(req, res){
   console.log(req.headers);
   console.log('------------------------------------------');
   if(req.body.username!=undefined && req.body.username!='' && req.body.password!=undefined && req.body.password!='') {
-    auth.auth(req.body.username.toLowerCase(), req.body.password, function(err, user_id, hash){
+    auth.auth(req.body.username.toLowerCase(), req.body.password, function(err, user_id, receiver, hash){
       if (user_id) {
         // Regenerate session when signing in
         // to prevent fixation 
@@ -186,12 +187,14 @@ app.post('/login', function(req, res){
           // or in this case the entire user object
           req.session.user = user_id;
           req.session.user_name = req.body.username;
+          req.session.receiver = receiver
           req.session.week = currentWeek(new Date());
           console.log(req.session);
           //save cookies
           if(req.body.remember != undefined){
            res.cookie('timesheet_id', user_id, {maxAge: 900000, httpOnly: true});
            res.cookie('timesheet_user', req.body.username, {maxAge: 900000, httpOnly: true});
+           res.cookie('timesheet_receiver', receiver, {maxAge: 900000, httpOnly: true});
            res.cookie('timesheet_token', hash, {maxAge: 900000, httpOnly: true});
           }
           res.redirect('/login');

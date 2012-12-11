@@ -117,6 +117,16 @@ function insert_new_user(name, email, team, password, salt, flag) {
   _udb.prepare(user_insert, name, email, team, password, salt, flag).run();
 }
 
+function get_rec(user_id, _cb) {
+  console.log("get get_rec "+ user_id);
+  _udb.prepare(user_query, user_id)
+    .get(function(err, rows) {
+      if(rows != undefined) {
+        console.log(rows);
+        _cb(rows['report_receiver']);
+      }
+  });
+}
 
 //interface
 function nsql_users(_db, cb) {
@@ -146,6 +156,9 @@ function nsql_users(_db, cb) {
       },
       new_user: function(name, email, team, password, salt, flag){
         return insert_new_user(name, email, team, password, salt, flag);
+      },
+      get_receiver: function(id, _db){
+        return get_rec(id, _db);
       }
     });
   });
