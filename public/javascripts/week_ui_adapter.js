@@ -133,8 +133,9 @@ function week_view(table, model, navigate, save) {
   //end of hack
 
   //add header
-  var now = new Date();
-  now.setDate(model[0].week*7-9); //todo, will work for 2012 only
+  var now = new Date('1 January, 2012');
+  now.setDate(model[0].week*7-8); //todo, will work for 2012 only
+
   var head_row = table.insertRow(-1);
   const weekdays = new Array('Sat', 'Sun', 'Mon', 'Tue', 'Wen', 'Thu', 'Fri');
   head_row.insertCell(-1).innerHTML = 
