@@ -9,6 +9,9 @@ block content
       input(class='btn btn-info', id='report', type='button', value='send report')
       b  CC: 
       input(class='text-inline', id='reciever', type='text', value='#{receiver}', placeholder='enter extra emails, with comma as delimeter')
+      p
+      div(class="alert alert-info", style = "display:none;")
+       b report is sent
       hr
       h5 User: #{user_name} 
       a(href='/logout') Logout

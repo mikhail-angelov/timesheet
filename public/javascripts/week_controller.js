@@ -1,3 +1,4 @@
+var sent = true; 
 
 $(document).ready(function on_load() {
 
@@ -28,8 +29,14 @@ $(document).ready(function on_load() {
       });
 
     $('#report').click(function(){
+      if(sent) {
         $.post('/report/', { data: JSON.stringify(model), reciever: $('#reciever').val() }, function(res) {
                 console.log(res);
+                sent = true;
+                //show success alert
+                $('.alert-info').attr('style',"display:block;");
             });
+      }
+      sent = false;
     })
 });

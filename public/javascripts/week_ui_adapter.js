@@ -133,18 +133,24 @@ function week_view(table, model, navigate, save) {
   //end of hack
 
   //add header
-  var now = new Date('1 January, 2012');
-  now.setDate(model[0].week*7-8); //todo, will work for 2012 only
+  var today = new Date();
+  var yr = today.getFullYear();
+  var now = new Date('1 January, ' + yr);
+  now.setDate(model[0].week*7-8);
+  var week = model[0].week;
+  while(week - 52 > 0) week -= 52;
+  while(week + 52 < 0) week += 52;
 
   var head_row = table.insertRow(-1);
   const weekdays = new Array('Sat', 'Sun', 'Mon', 'Tue', 'Wen', 'Thu', 'Fri');
+  const months = new Array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
   head_row.insertCell(-1).innerHTML = 
-    '<div class ="span44"><button class="btn btn-mini btn-info" id="prev" onclick="navigate_weeks(-1)">\<</button> Week ' + model[0].week + ' \
+    '<div class ="span44"><button class="btn btn-mini btn-info" id="prev" onclick="navigate_weeks(-1)">\<</button> Week ' + week + ' \
      <button class="btn btn-mini btn-info" id="next" onclick="navigate_weeks(1)">\></button></div>';
   
   for( var i = 0; i < 7; i++) {
     now.setDate(now.getDate() +  1);
-    head_row.insertCell(-1).innerHTML=weekdays[i] + ' ' + now.getDate();
+    head_row.insertCell(-1).innerHTML=' (' + now.getDate() + ', ' + months[now.getMonth()] + ') ' + weekdays[i];
   }
   head_row.insertCell(-1).innerHTML = ''; //line up
   
