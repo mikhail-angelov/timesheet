@@ -136,7 +136,7 @@ function week_view(table, model, navigate, save) {
   var today = new Date();
   var yr = today.getFullYear();
   var now = new Date('1 January, ' + yr);
-  now.setDate(model[0].week*7-8);
+  now.setDate(model[0].week*7-10);
   var week = model[0].week;
   while(week - 52 > 0) week -= 52;
   while(week + 52 < 0) week += 52;
