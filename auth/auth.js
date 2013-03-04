@@ -65,18 +65,22 @@ function authenticate(name, pass, fn) {
   if (!module.parent) console.log('authenticating %s:%s', name, pass);
 
   nsql_users.get_id(name, function(id){
-    nsql_users.get_receiver(id, function(receiver){
-      nsql_users.get_password(id, function(password, salt){
-        hash(pass, salt, function(err, hash){
-          if (err) return fn(err);
-          if(hash == password) {
-            fn(null, id, receiver, hash);
-          } else {
-            fn(new Error('invalid password'));
-          }
+    if(id == undefined) {
+      fn(new Error('invalid password'));
+    } else {
+      nsql_users.get_receiver(id, function(receiver){
+        nsql_users.get_password(id, function(password, salt){
+          hash(pass, salt, function(err, hash){
+            if (err) return fn(err);
+            if(hash == password) {
+              fn(null, id, receiver, hash);
+            } else {
+              fn(new Error('invalid password'));
+            }
+          });
         });
       });
-    });
+    }
   });
 }
 
